@@ -1,20 +1,4 @@
-" pathongen 设置
-" call pathogen#runtime_append_all_bundles()
-call pathogen#helptags()
-execute pathogen#infect()
 filetype plugin indent on
-
-
-
-" " vim_latex_live_preivew setting
-" autocmd Filetype tex setl updatetime=1
-" let g:livepreview_previewer = 'open -a skim' "Preview; Skim; 
-" let g:livepreview_engine = 'xelatex'
-
-
-" Mappings for compiling Latex file
-" autocmd FileType tex nmap <buffer> <C-T> :!xelatex %<CR>
-" autocmd FileType tex nmap <buffer> T :!open -a Skim %:r.pdf<CR><CR>
 
 
 " ===Vundle=== Beg
@@ -22,68 +6,111 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'Valloric/YouCompleteMe'
-" auto complete Python3
-"
+Plugin 'Valloric/YouCompleteMe' " complete but not snips
+Plugin 'SirVer/ultisnips' " Track the engine. 
+Plugin 'honza/vim-snippets' " the snippet content
 Plugin 'lervag/vimtex'
-"
-" Plugin 'xxxxx'
+Plugin 'preservim/nerdtree'
 call vundle#end()
+"文件识别
 filetype plugin indent on    " required
+"语法高亮
+syntax on
 " ====Vundle==== End
 
 
-" YouCompleteMe 设置
+
+"" Python
+" make filetype py == python
+" au BufNewFile,BufRead *.py set filetype=python
+autocmd FileType py set filetype=python
+" autocmd FileType py syntax on
+" autocmd FileType python syntax on
+autocmd FileType python setlocal colorcolumn=80 | highlight ColorColumn ctermbg=red
+" 设置 tag 转跳
+autocmd FileType python set tag=/Users/chengdaoyang/Documents/Programs/python/tags
+
+
+" == YouCompleteMe 设置 ==
 "默认配置文件路径"
 let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
 "打开vim时不再询问是否加载ycm_extra_conf.py配置"
 let g:ycm_confirm_extra_conf=0
 set completeopt=longest,menu
-"python解释器路径"
+"python解释器路径
 let g:ycm_path_to_python_interpreter='/usr/local/bin/python3'
 
-"   "是否开启语义补全"
+   "是否开启语义补全"
 "   let g:ycm_seed_identifiers_with_syntax=1
-"   "是否在注释中也开启补全"
+   "是否在注释中也开启补全"
 "   let g:ycm_complete_in_comments=1
 "   let g:ycm_collect_identifiers_from_comments_and_strings = 0
-"   "开始补全的字符数"
+   "开始补全的字符数"
 "   let g:ycm_min_num_of_chars_for_completion=2
-"   "补全后自动关机预览窗口"
+   "补全后自动关机预览窗口"
 "   let g:ycm_autoclose_preview_window_after_completion=1
-"   " 禁止缓存匹配项,每次都重新生成匹配项"
+   " 禁止缓存匹配项,每次都重新生成匹配项"
 "   let g:ycm_cache_omnifunc=0
-"   "字符串中也开启补全"
+   "字符串中也开启补全"
 "   let g:ycm_complete_in_strings = 1
-"   "离开插入模式后自动关闭预览窗口"
+   "离开插入模式后自动关闭预览窗口"
 "   autocmd InsertLeave * if pumvisible() == 0|pclose|endif
-"   " 补全窗口 颜色
+   " 补全窗口 颜色
 "   highlight PMenu ctermfg=0 ctermbg=242 guifg=black guibg=darkgrey
 "   highlight PMenuSel ctermfg=242 ctermbg=8 guifg=darkgrey guibg=black
-"   " ctrl+空格 自动补全
+   " ctrl+空格 自动补全
 "   let g:ycm_key_invoke_completion = '<c-space>'
-"   "回车即选中当前项"
-"   " inoremap <expr> <CR>       pumvisible() ? '<C-y>' : '\<CR>'     
+   "回车即选中当前项"
+   " inoremap <expr> <CR>       pumvisible() ? '<C-y>' : '\<CR>'     
 
 
-" 配置for latex(vimtex) auto
+
+
+
+" == 配置for latex(vimtex) auto ==
 if !exists('g:ycm_semantic_triggers')
   let g:ycm_semantic_triggers = {}
 endif
 au VimEnter * let g:ycm_semantic_triggers.tex=g:vimtex#re#youcompleteme
 
 
+
+
+let g:ycm_complete_in_comments = 1 
+let g:ycm_seed_identifiers_with_syntax = 1 
+let g:ycm_collect_identifiers_from_comments_and_strings = 1 
+
 let g:ycm_add_preview_to_completeopt = 0
 let g:ycm_show_diagnostics_ui = 0
 let g:ycm_server_log_level = 'info'
 let g:ycm_min_num_identifier_candidate_chars = 2
-let g:ycm_collect_identifiers_from_comments_and_strings = 1
 let g:ycm_complete_in_strings=1
-let g:ycm_key_invoke_completion = '<c-space>'
+" let g:ycm_key_invoke_completion = '<c-space>'
+" make YCM compatible with UltiSnips (using supertab)
+let g:ycm_key_list_select_completion = ['<Down>']
+let g:ycm_key_list_previous_completion = ['<Up>']
+let g:SuperTabDefaultCompletionType = '<C-n>'
 set completeopt=menu,menuone
 
 
-" vimtex 配置
+
+
+" ====snippet 设置 ====
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-j>"
+let g:UltiSnipsJumpBackwardTrigger="<c-k>"
+
+" If you want :UltiSnipsEdit to split your window.
+" let g:UltiSnipsEditSplit="vertical"
+
+let g:UltiSnipsSnippetsDir='~/.vim/bundle/vim-snippets/UltiSnips'
+let g:UltiSnipsSnippetDirectories=["UltiSnips"]
+
+
+
+
+" == vimtex 配置 ==
 let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'skim'
 let g:vimtex_fold_enable=0 " Need to use fastFold with this option or... really slow.
@@ -96,11 +123,11 @@ let g:vimtex_fold_manual=1 " autofold is slow in vim, use FastFold instead of th
 " endif
 
 
+
+
+
 "  ==== Folding 设置 Start ====
 "  保存/读取 view
-" autocmd BufWinLeave *'* mkview  "save view (folding)
-" autocmd BufWinEnter *'* silent loadview "load it
-
 augroup remember_folds
   autocmd!
   autocmd BufWinLeave * mkview
@@ -142,12 +169,35 @@ set foldtext=MyCleanFoldText()
 
 
 
+
+" == NERDTree 设置 ==
+autocmd vimenter * NERDTree
+" 宽度
+let g:NERDTreeWinSize=22
+" auto close NERDTree at end
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+
+"" 打开nerdtree auto | find tree find |   cursor on edit text
+autocmd VimEnter * NERDTree | wincmd w | NERDTreeFind | wincmd p  
+
+" Nerdtree in new tab
+autocmd BufWinEnter * NERDTreeFind  "Mirror | wincmd w | NERDTreeFind | wincmd p  
+
+let NERDTreeIgnore = ['\.pyc$', '__pycache__']  " ignore
+
+
+
+
+
+
 noremap <c-space> <NOP>
 " Jedi 设置\
-let g:jedi#auto_initialization = 0 "停止 自动inti
+" let g:jedi#auto_initialization = 0 "停止 自动inti
 
 " 80 行提醒
-set colorcolumn=80  " set cc=80
+" set colorcolumn=80  " set cc=80
+
+
 
 " 配色
 :color desert
@@ -156,17 +206,16 @@ set colorcolumn=80  " set cc=80
 set backspace=indent,eol,start
 
 
-"语法高亮
-syntax on
-
 "自动对齐
 set autoindent
+
 
 "tab缩进
 set tabstop=4
 set shiftwidth=4
 set expandtab
 set smarttab
+
 
 "no <down> <Nop> 表示 在normal mode 中 把 down remap 到 Nop
 no <down> <Nop>
@@ -179,9 +228,11 @@ nnoremap <F6> :
 inoremap <F6> <Esc>
 cnoremap <F6> <Esc>
 
+
 "map 左 下 to ctl+n == 代码补全
 inoremap <down> <C-n>
 inoremap<left> <C-n>
+
 
 "nnoremap <C-@> i
 "inoremap <C-@> <Esc>
@@ -194,7 +245,7 @@ ino <right> <Nop>
 
 
 "显示行数
-set nu!
+set nu
 
 "显示相对行数
 set relativenumber
@@ -205,7 +256,22 @@ set showcmd
 "浅色显示当前行
 autocmd InsertLeave * se nocul
 
-"statusline
+
+" ==== tab bar ====
+hi TabLineFill ctermfg=Lightgray 
+hi TabLineSel ctermfg=lightgray ctermbg=lightgreen
+hi TabLine ctermfg=lightgreen ctermbg=lightgray
+" hi Title ctermfg=Black ctermbg=None
+
+
+" ====split window bar ====
+highlight VertSplit ctermfg=Lightgray ctermbg=lightgreen
+highlight StatusLineNC ctermfg=Lightgray ctermbg=lightgreen
+
+
+ 
+
+" ==== statusline ====
 set laststatus=2
 set statusline=%t%m%r%h%w%=\ [%Y]\ [%{''.(&fenc!=''?&fenc:&enc).''}]\ [%{&ff}]\ [%04v,%04l]\ [%p%%]\ [%L]
 " set statusline=
@@ -215,38 +281,44 @@ set statusline=%t%m%r%h%w%=\ [%Y]\ [%{''.(&fenc!=''?&fenc:&enc).''}]\ [%{&ff}]\ 
 " set statusline+=%4*\ %{&ff}\                              "FileFormat (dos/unix..) 
 " set statusline+=%5*\ %{&spelllang}\%{HighlightSearch()}\  "Spellanguage & Highlight on?
 " set statusline+=%8*\ %=\ row:%l/%L\ (%03p%%)\             "Rownumber/total (%)
-hi StatusLine ctermbg=NONE cterm=NONE
-"hi StatusLine ctermbg=green ctermfg=blue
+"hi StatusLine ctermbg=NONE cterm=NONE
+hi StatusLine ctermfg=yellow ctermbg=black
 
 
 
-" Map F5 to run script
-    map <F5> :call CompileRunGcc()<CR>
+" Map F10 to run script
+    map <F10> :call CompileRunGcc()<CR>
     func! CompileRunGcc()
         exec "w"
 if &filetype == 'c'
             exec "!g++ % -o %<"
             exec "!time ./%<"
+" elseif &filetype == 'py'
+"             exec "!time python3 %"
+
+elseif &filetype == 'python'
+            exec "!time python3 %"
+elseif &filetype == 'sh'
+        "   :!time bash %
+            :! bash %
+elseif &filetype == 'html'
+            exec "!open -a 'Google Chrome' % &"
+" Expert tex to pdf
+elseif &filetype == 'tex'
+            exec "!pdflatex %"
+
 elseif &filetype == 'cpp'
             exec "!g++ % -o %<"
             exec "!time ./%<"
 elseif &filetype == 'java'
             exec "!javac %"
             exec "!time java %<"
-elseif &filetype == 'sh'
-            :!time bash %
-elseif &filetype == 'python'
-            exec "!time python3 %"
-elseif &filetype == 'html'
-            exec "!firefox % &"
 elseif &filetype == 'go'
     "        exec "!go build %<"
             exec "!time go run %"
 elseif &filetype == 'mkd'
             exec "!~/.vim/markdown.pl % > %.html &"
             exec "!firefox %.html &"
-elseif &filetype == 'python'
-            exec "!time python2.7 %"
 
 endif
     endfunc
