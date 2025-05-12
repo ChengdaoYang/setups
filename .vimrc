@@ -6,9 +6,9 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 Plugin 'VundleVim/Vundle.vim'
-Plugin 'Valloric/YouCompleteMe' " complete but not snips
-Plugin 'SirVer/ultisnips' " Track the engine. 
-Plugin 'honza/vim-snippets' " the snippet content
+" Plugin 'Valloric/YouCompleteMe' " complete but not snips
+" Plugin 'SirVer/ultisnips' " Track the engine. 
+" Plugin 'honza/vim-snippets' " the snippet content
 Plugin 'lervag/vimtex'
 Plugin 'preservim/nerdtree'
 call vundle#end()
@@ -33,12 +33,18 @@ autocmd FileType python set tag=/Users/chengdaoyang/Documents/Programs/python/ta
 
 " == YouCompleteMe 设置 ==
 "默认配置文件路径"
-let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+" let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
+let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 "打开vim时不再询问是否加载ycm_extra_conf.py配置"
 let g:ycm_confirm_extra_conf=0
 set completeopt=longest,menu
 "python解释器路径
-let g:ycm_path_to_python_interpreter='/usr/local/bin/python3'
+" let g:ycm_path_to_python_interpreter='/usr/local/bin/python3'
+" let g:ycm_path_to_python_interpreter='/opt/local/bin/python3usr/local/bin/python3'
+ let g:ycm_path_to_python_interpreter='/opt/local/bin/python3'
+
+let g:ycm_path_to_python_interpreter='/opt/local/bin/python3usr/local/bin/python3'
+
 
    "是否开启语义补全"
 "   let g:ycm_seed_identifiers_with_syntax=1
@@ -286,8 +292,8 @@ hi StatusLine ctermfg=yellow ctermbg=black
 
 
 
-" Map F10 to run script
-    map <F10> :call CompileRunGcc()<CR>
+" Map F11 to run script
+    map <F11> :call CompileRunGcc()<CR>
     func! CompileRunGcc()
         exec "w"
 if &filetype == 'c'
@@ -306,6 +312,8 @@ elseif &filetype == 'html'
 " Expert tex to pdf
 elseif &filetype == 'tex'
             exec "!pdflatex %"
+elseif &filetype == 'sql'
+            exec "!psql -d chengdaoyang -f %"
 
 elseif &filetype == 'cpp'
             exec "!g++ % -o %<"
@@ -322,5 +330,3 @@ elseif &filetype == 'mkd'
 
 endif
     endfunc
-
-
