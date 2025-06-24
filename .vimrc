@@ -9,6 +9,7 @@ Plugin 'VundleVim/Vundle.vim'
 " Plugin 'Valloric/YouCompleteMe' " complete but not snips
 " Plugin 'SirVer/ultisnips' " Track the engine. 
 " Plugin 'honza/vim-snippets' " the snippet content
+Plugin 'prabirshrestha/vim-lsp'
 Plugin 'lervag/vimtex'
 Plugin 'preservim/nerdtree'
 call vundle#end()
@@ -34,18 +35,15 @@ autocmd FileType python set tag=/Users/chengdaoyang/Documents/Programs/python/ta
 " == YouCompleteMe 设置 ==
 "默认配置文件路径"
 " let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
+"let g:ycm_global_ycm_extra_conf='~/.vim/bundle/YouCompleteMe/.ycm_extra_conf.py'
 "打开vim时不再询问是否加载ycm_extra_conf.py配置"
-let g:ycm_confirm_extra_conf=0
-set completeopt=longest,menu
+"let g:ycm_confirm_extra_conf=0
+"set completeopt=longest,menu
 "python解释器路径
 " let g:ycm_path_to_python_interpreter='/usr/local/bin/python3'
 " let g:ycm_path_to_python_interpreter='/opt/local/bin/python3usr/local/bin/python3'
- let g:ycm_path_to_python_interpreter='/opt/local/bin/python3'
-
-let g:ycm_path_to_python_interpreter='/opt/local/bin/python3usr/local/bin/python3'
-
-
+" let g:ycm_path_to_python_interpreter='/opt/local/bin/python3'
+" let g:ycm_path_to_python_interpreter='/opt/local/bin/python3usr/local/bin/python3'
    "是否开启语义补全"
 "   let g:ycm_seed_identifiers_with_syntax=1
    "是否在注释中也开启补全"
@@ -69,6 +67,48 @@ let g:ycm_path_to_python_interpreter='/opt/local/bin/python3usr/local/bin/python
    "回车即选中当前项"
    " inoremap <expr> <CR>       pumvisible() ? '<C-y>' : '\<CR>'     
 
+
+
+" ==VIM LSP===
+if executable('pylsp')
+    " pip install python-lsp-server
+    au User lsp_setup call lsp#register_server({
+        \ 'name': 'pylsp',
+        \ 'cmd': {server_info->['pylsp']},
+        \ 'allowlist': ['python'],
+        \ })
+endif
+
+let g:lsp_diagnostics_enabled = 0         " disable diagnostics support
+
+function! s:on_lsp_buffer_enabled() abort
+    setlocal omnifunc=lsp#complete
+    setlocal signcolumn=yes
+    if exists('+tagfunc') | setlocal tagfunc=lsp#tagfunc | endif
+    nmap <buffer> gd <plug>(lsp-definition)
+    nmap <buffer> gr <plug>(lsp-references)
+    nmap <buffer> K <plug>(lsp-hover)
+    "nmap <buffer> gs <plug>(lsp-document-symbol-search)
+    "nmap <buffer> gS <plug>(lsp-workspace-symbol-search)
+    "nmap <buffer> <leader>rn <plug>(lsp-rename)
+    "nmap <buffer> gi <plug>(lsp-implementation)
+    "nmap <buffer> gt <plug>(lsp-type-definition)
+    "nmap <buffer> [g <plug>(lsp-previous-diagnostic)
+    "nmap <buffer> ]g <plug>(lsp-next-diagnostic)
+    "nnoremap <buffer> <expr><c-f> lsp#scroll(+4)
+    "nnoremap <buffer> <expr><c-d> lsp#scroll(-4)
+
+    let g:lsp_format_sync_timeout = 1000
+    autocmd! BufWritePre *.rs,*.go call execute('LspDocumentFormatSync')
+    
+    " refer to doc to add more commands
+endfunction
+
+augroup lsp_install
+    au!
+    " call s:on_lsp_buffer_enabled only for languages that has the server registered.
+    autocmd User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
 
 
 
@@ -207,6 +247,9 @@ noremap <c-space> <NOP>
 
 " 配色
 :color desert
+set background=dark
+highlight Normal ctermfg=lightgrey ctermbg=black
+
 
 " 加强delete
 set backspace=indent,eol,start
@@ -266,8 +309,8 @@ autocmd InsertLeave * se nocul
 " ==== tab bar ====
 hi TabLineFill ctermfg=Lightgray 
 hi TabLineSel ctermfg=lightgray ctermbg=lightgreen
-hi TabLine ctermfg=lightgreen ctermbg=lightgray
-" hi Title ctermfg=Black ctermbg=None
+hi TabLine ctermfg=lightgreen ctermbg=lightgray " ctermbg=lightgray
+hi Title ctermfg=Black ctermbg=None
 
 
 " ====split window bar ====
